@@ -29,7 +29,7 @@ function App() {
       { title, status: new Date().toDateString() },
       ...todoList
     ]);
-    // setShowAdd(false);
+    setShowAdd(false);
   }
 
   return (
@@ -38,33 +38,28 @@ function App() {
         <h1>我的看板</h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <main className="kanban-board">
-        <section className="kanban-column column-todo">
-          <h2>待处理<button onClick={handleAdd} disabled={showAdd}>&#8853; 添加新卡片</button></h2>
-          <ul>
-            {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
-            {
-              todoList.map((props) => <KanbanCard {...props} />)
-            }
-          </ul>
-        </section>
-        <section className="kanban-column column-ongoing">
-          <h2>进行中</h2>
-          <ul>
-            {
-              ongoingList.map((props) => <KanbanCard {...props} />)
-            }
-          </ul>
-        </section>
-        <section className="kanban-column column-done">
-          <h2>已完成</h2>
-          <ul>
-            {
-              doneList.map((props) => <KanbanCard {...props} />)
-            }
-          </ul>
-        </section>
-      </main>
+      <KanbanBoard>
+        <KanbanColumn className="column-todo" title={
+          <>
+            <span>待处理</span> <button onClick={handleAdd}>添加新卡片</button>
+          </>
+        }>
+          {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
+          {
+            todoList.map((props) => <KanbanCard {...props} />)
+          }
+        </KanbanColumn>
+        <KanbanColumn className="column-ongoing" title="进行中">
+          {
+            ongoingList.map((props) => <KanbanCard {...props} />)
+          }
+        </KanbanColumn>
+        <KanbanColumn className="column-done" title="已完成">
+          {
+            doneList.map((props) => <KanbanCard {...props} />)
+          }
+        </KanbanColumn>
+      </KanbanBoard>
     </div >
   );
 }
@@ -96,6 +91,25 @@ const KanbanNewCard = ({ onSubmit }) => {
         <input type="text" value={title} onChange={handleChange} onKeyDown={handleKeyDown} />
       </div>
     </li>
+  );
+};
+
+const KanbanBoard = ({ children }) => {
+  return (
+    <main className="kanban-board">{children}</main>
+  );
+};
+
+const KanbanColumn = ({ children, className, title }) => {
+  const mergeClassName = `kanban-column ${className}`
+
+  return (
+    <section className={mergeClassName}>
+      <h2>{title}</h2>
+      <ul>
+        {children}
+      </ul>
+    </section>
   );
 };
 
