@@ -13,7 +13,7 @@ function App() {
   const [ongoingList, setOngoingList] = useState([
     { title: '开发任务-4', status: '2022-05-22 18:15' },
     { title: '开发任务-6', status: '2023-05-22 18:15' },
-    { title: '测试任务-2', status: '2024-05-24 14:15' }
+    { title: '测试任务-2', status: '2024-05-24 14:15' }            
   ]);
   const [doneList, setDoneList] = useState([
     { title: '开发任务-2', status: '2024-04-22 18:15' },
@@ -32,33 +32,61 @@ function App() {
     setShowAdd(false);
   }
 
+  const handleSaveCards = () => {
+    let cards = {
+      todoList,
+      ongoingList,
+      doneList
+    }
+    localStorage.setItem('cards', JSON.stringify(cards))
+  }
+
+  useEffect(() => {
+    setTimeout(() => {
+      const cards = JSON.parse(localStorage.getItem('cards'))
+      setTodoList(cards.todoList);
+      setOngoingList(cards.ongoingList);
+      setDoneList(cards.doneList);
+      setLoading(false);
+    }, 1000);
+  }, [])
+
+  const [loading, setLoading] = useState(true);
+
   return (
     <div className="App">
       <header className="App-header">
+        <button onClick={handleSaveCards}>保存所有卡片</button>
         <h1>我的看板</h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
       <KanbanBoard>
-        <KanbanColumn className="column-todo" title={
-          <>
-            <span>待处理</span> <button onClick={handleAdd}>添加新卡片</button>
-          </>
-        }>
-          {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
-          {
-            todoList.map((props) => <KanbanCard {...props} />)
-          }
-        </KanbanColumn>
-        <KanbanColumn className="column-ongoing" title="进行中">
-          {
-            ongoingList.map((props) => <KanbanCard {...props} />)
-          }
-        </KanbanColumn>
-        <KanbanColumn className="column-done" title="已完成">
-          {
-            doneList.map((props) => <KanbanCard {...props} />)
-          }
-        </KanbanColumn>
+        {
+          loading ? (
+            <KanbanColumn className="loading" title={'读取中...'}></KanbanColumn>
+          ) : (<>
+              <KanbanColumn className="column-todo" title={
+                <>
+                  <span>待处理</span> <button onClick={handleAdd}>添加新卡片</button>
+                </>
+              }>
+                {showAdd && <KanbanNewCard onSubmit={handleSubmit} />}
+                {
+                  todoList.map((props, index) => <KanbanCard {...props} key={index} />)
+                }
+              </KanbanColumn>
+              <KanbanColumn className="column-ongoing" title="进行中">
+                {
+                  ongoingList.map((props, index) => <KanbanCard {...props} key={index} />)
+                }
+              </KanbanColumn>
+              <KanbanColumn className="column-done" title="已完成">
+                {
+                  doneList.map((props, index) => <KanbanCard {...props} key={index} />)
+                }
+              </KanbanColumn>
+            </>)
+        }
       </KanbanBoard>
     </div >
   );

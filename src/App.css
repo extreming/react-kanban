@@ -63,6 +63,10 @@
   background-color: #C0E8BA;
 }
 
+.loading {
+  background-color: #e3e3e3;
+}
+
 .kanban-column {
   flex: 1 1;
   display: flex;
