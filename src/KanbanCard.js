@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import AdminContext from './context/AdminContext'
 
 const MINUTE = 60 * 1000
 const HOUR = MINUTE * 60
 const DAY = HOUR * 24
 const YEAR = DAY * 365
-export default function KanbanCard({ title, status, dragStart }) {
+export default function KanbanCard({ title, status, dragStart, onRemove }) {
   const [displayTime, setDisplayTime] = useState(status)
+  const isAdmin = useContext(AdminContext)
 
   useEffect(() => {
     const updateDisplayTime = () => {
@@ -24,7 +26,7 @@ export default function KanbanCard({ title, status, dragStart }) {
     }
 
     const intervalId = setInterval(updateDisplayTime, MINUTE)
-    
+
     updateDisplayTime()
 
     return function cleanup() {
@@ -41,7 +43,14 @@ export default function KanbanCard({ title, status, dragStart }) {
   return (
     <li className="kanban-card" draggable onDragStart={handleDragStart}>
       <div className="card-title">{title}</div>
-      <div className="card-status">{displayTime}</div>
+      <div className="card-status">
+        {displayTime}
+        {
+          isAdmin && onRemove && (
+            <button onClick={() => onRemove({ title })}>X</button>
+          )
+        }
+      </div>
     </li>
   )
 }

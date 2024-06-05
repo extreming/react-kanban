@@ -2,6 +2,7 @@ import logo from './logo.svg'
 import './App.css'
 import { useState, useEffect } from 'react'
 import KanbanBoard from './KanbanBoard'
+import AdminContext from './context/AdminContext'
 
 function App() {
   const [todoList, setTodoList] = useState([
@@ -20,6 +21,7 @@ function App() {
     { title: '测试任务-1', status: '2024-05-12 18:15' }
   ])
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   const updaters = {
     'todo': setTodoList,
@@ -53,18 +55,29 @@ function App() {
   }
 
   const handleRemove = (column, cardToRemove) => {
-    updaters[column](currentStat => currentStat.filter(item => !Object.is(item, cardToRemove)))
+    updaters[column](currentStat => currentStat.filter(item => item.title !== cardToRemove.title))
   }
 
+  const handleToggleAdmin = () => {
+    setIsAdmin(!isAdmin)
+  }
 
   return (
     <div className="App">
       <header className="App-header">
-        <button onClick={handleSaveCards}>保存所有卡片</button>
-        <h1>我的看板</h1>
+        <h1>
+          我的看板
+          <button onClick={handleSaveCards}>保存所有卡片</button>
+          <label>
+            <input type="checkbox" value={isAdmin} onChange={handleToggleAdmin} />
+            管理员模式
+          </label>
+        </h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <KanbanBoard loading={loading} todoList={todoList} ongoingList={ongoingList} doneList={doneList} onAdd={handleAdd} onRemove={handleRemove} />
+      <AdminContext.Provider value={isAdmin}>
+        <KanbanBoard loading={loading} todoList={todoList} ongoingList={ongoingList} doneList={doneList} onAdd={handleAdd} onRemove={handleRemove} />
+      </AdminContext.Provider>
     </div >
   )
 }

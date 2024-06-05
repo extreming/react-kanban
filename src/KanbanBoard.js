@@ -50,6 +50,7 @@ export default function KanbanBoard({loading, todoList, ongoingList, doneList, o
             handleDragTarget={(isTarget) => setDragTarget(isTarget ? 'done' : null)}
             cardList={doneList}
             setDraggedItem={setDragItem}
+            onRemove={onRemove.bind(null, 'done')}
           />
         </>)
       }
