@@ -7,7 +7,8 @@ export default function KanbanNewCard({ onSubmit }) {
   }
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      onSubmit(title)
+      const newCard = { title, status: new Date().toString() }
+      onSubmit(newCard)
     }
   }
 

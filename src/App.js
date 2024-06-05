@@ -2,7 +2,6 @@ import logo from './logo.svg'
 import './App.css'
 import { useState, useEffect } from 'react'
 import KanbanBoard from './KanbanBoard'
-import KanbanColumn from './KanbanColumn'
 
 function App() {
   const [todoList, setTodoList] = useState([
@@ -20,13 +19,6 @@ function App() {
     { title: '开发任务-2', status: '2024-04-22 18:15' },
     { title: '测试任务-1', status: '2024-05-12 18:15' }
   ])
-
-  const handleSubmit = (title) => {
-    setTodoList(todoList => [
-      { title, status: new Date().toDateString() },
-      ...todoList
-    ])
-  }
 
   const handleSaveCards = () => {
     let cards = {
@@ -51,32 +43,20 @@ function App() {
 
   const [loading, setLoading] = useState(true)
 
-  const [dragItem, setDragItem] = useState(null)
-  const [dragSource, setDragSource] = useState(null)
-  const [dragTarget, setDragTarget] = useState(null)
-
-
-  const handleDrop = (evt) => {
-    if (!dragItem || !dragSource || !dragTarget || dragSource === dragTarget) {
-      return
-    }
-
-    const updaters = {
-      'todo': setTodoList,
-      'ongoing': setOngoingList,
-      'done': setDoneList
-    }
-
-    if (dragSource) {
-      updaters[dragSource]((currentStat) => 
-        currentStat.filter((item) => !Object.is(item, dragItem))
-      )
-    }
-
-    if (dragTarget) {
-      updaters[dragTarget]((currentStat) => [dragItem, ...currentStat])
-    }
+  const updaters = {
+    'todo': setTodoList,
+    'ongoing': setOngoingList,
+    'done': setDoneList
   }
+
+  const handleAdd = (column, newCard) => {
+    updaters[column](currentStat => [newCard, ...currentStat])
+  }
+
+  const handleRemove = (column, cardToRemove) => {
+    updaters[column](currentStat => currentStat.filter(item => !Object.is(item, cardToRemove)))
+  }
+
 
   return (
     <div className="App">
@@ -85,41 +65,7 @@ function App() {
         <h1>我的看板</h1>
         <img src={logo} className="App-logo" alt="logo" />
       </header>
-      <KanbanBoard>
-        {
-          loading ? (
-            <KanbanColumn className="loading" title={'读取中...'}></KanbanColumn>
-          ) : (<>
-            <KanbanColumn
-              className="column-todo"
-              title="待处理"
-              onDrop={handleDrop} 
-              handleDragSource={(isSource) => setDragSource(isSource ? 'todo' : null)}
-              handleDragTarget={(isTarget) => setDragTarget(isTarget ? 'todo' : null)}
-              cardList={todoList}
-              setDraggedItem={setDragItem}
-              canAddNew={true}
-              onAdd={handleSubmit}
-            />
-            <KanbanColumn
-              className="column-ongoing"
-              title="进行中"
-              onDrop={handleDrop}
-              handleDragSource={(isSource) => setDragSource(isSource ? 'ongoing' : null)}
-              handleDragTarget={(isTarget) => setDragTarget(isTarget ? 'ongoing' : null)}
-              cardList={ongoingList}
-            />
-            <KanbanColumn
-              className="column-done"
-              title="已完成"
-              onDrop={handleDrop}
-              handleDragSource={(isSource) => setDragSource(isSource ? 'done' : null)}
-              handleDragTarget={(isTarget) => setDragTarget(isTarget ? 'done' : null)}
-              cardList={doneList}
-            />
-          </>)
-        }
-      </KanbanBoard>
+      <KanbanBoard loading={loading} todoList={todoList} ongoingList={ongoingList} doneList={doneList} onAdd={handleAdd} onRemove={handleRemove} />
     </div >
   )
 }
