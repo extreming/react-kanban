@@ -19,6 +19,13 @@ function App() {
     { title: '开发任务-2', status: '2024-04-22 18:15' },
     { title: '测试任务-1', status: '2024-05-12 18:15' }
   ])
+  const [loading, setLoading] = useState(true)
+
+  const updaters = {
+    'todo': setTodoList,
+    'ongoing': setOngoingList,
+    'done': setDoneList
+  }
 
   const handleSaveCards = () => {
     let cards = {
@@ -40,14 +47,6 @@ function App() {
       setLoading(false)
     }, 1000)
   }, [])
-
-  const [loading, setLoading] = useState(true)
-
-  const updaters = {
-    'todo': setTodoList,
-    'ongoing': setOngoingList,
-    'done': setDoneList
-  }
 
   const handleAdd = (column, newCard) => {
     updaters[column](currentStat => [newCard, ...currentStat])

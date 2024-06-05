@@ -6,6 +6,7 @@ const DAY = HOUR * 24
 const YEAR = DAY * 365
 export default function KanbanCard({ title, status, dragStart }) {
   const [displayTime, setDisplayTime] = useState(status)
+
   useEffect(() => {
     const updateDisplayTime = () => {
       const timePassed = new Date() - new Date(status)
@@ -21,7 +22,9 @@ export default function KanbanCard({ title, status, dragStart }) {
       }
       setDisplayTime(relativeTime)
     }
+
     const intervalId = setInterval(updateDisplayTime, MINUTE)
+    
     updateDisplayTime()
 
     return function cleanup() {

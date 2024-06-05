@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 
 export default function KanbanNewCard({ onSubmit }) {
   const [title, setTitle] = useState('')
+  
   const handleChange = (event) => {
     setTitle(event.target.value)
   }
