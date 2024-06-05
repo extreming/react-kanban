@@ -3,6 +3,9 @@ import KanbanNewCard from "./KanbanNewCard"
 import { useState } from "react"
 
 export default function KanbanColumn({ className, title, handleDragSource, handleDragTarget, onDrop, cardList = [], setDraggedItem, canAddNew, onAdd }) {
+  const [showAdd, setShowAdd] = useState(false)
+  
+  
   const mergeClassName = `kanban-column ${className}`
 
   const handleDragStart = (evt) => {
@@ -28,7 +31,6 @@ export default function KanbanColumn({ className, title, handleDragSource, handl
     handleDragTarget(true)
   }
 
-  const [showAdd, setShowAdd] = useState(false)
   const handleAdd = () => {
     setShowAdd(true)
   }
