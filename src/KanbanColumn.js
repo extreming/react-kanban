@@ -1,4 +1,8 @@
-export default function KanbanColumn({ children, className, title, handleDragSource, handleDragTarget, onDrop }) {
+import KanbanCard from "./KanbanCard"
+import KanbanNewCard from "./KanbanNewCard"
+import { useState } from "react"
+
+export default function KanbanColumn({children, className, title, handleDragSource, handleDragTarget, onDrop, cardList = [], setDraggedItem, canAddNew, onAdd }) {
   const mergeClassName = `kanban-column ${className}`
 
   const handleDragStart = (evt) => {
@@ -24,6 +28,16 @@ export default function KanbanColumn({ children, className, title, handleDragSou
     handleDragTarget(true)
   }
 
+  const [showAdd, setShowAdd] = useState(false)
+  const handleAdd = () => {
+    setShowAdd(true)
+  }
+
+  const handleSubmit = (title) => {
+    onAdd && onAdd(title)
+    setShowAdd(false)
+  }
+
   return (
     <section
       className={mergeClassName}
@@ -33,9 +47,21 @@ export default function KanbanColumn({ children, className, title, handleDragSou
       onDrop={handleDrop}
       onDragEnd={handleDragEnd}
     >
-      <h2>{title}</h2>
+      <h2>
+        {title}
+        {
+          canAddNew && (
+            <button onClick={handleAdd} disabled={showAdd}>&#8853; 添加新卡片</button>
+          )
+        }
+      </h2>
       <ul>
-        {children}
+        {
+          canAddNew && showAdd && <KanbanNewCard onSubmit={handleSubmit} />
+        }
+        {
+          cardList.map(props => (<KanbanCard key={props.title} onDragStart={() => setDraggedItem && setDraggedItem(props)} {...props} />))
+        }
       </ul>
     </section>
   )
