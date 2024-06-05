@@ -5,7 +5,6 @@ import { useState } from "react"
 export default function KanbanColumn({ className, title, handleDragSource, handleDragTarget, onDrop, cardList = [], setDraggedItem, canAddNew, onAdd }) {
   const [showAdd, setShowAdd] = useState(false)
   
-  
   const mergeClassName = `kanban-column ${className}`
 
   const handleDragStart = (evt) => {
